@@ -31,7 +31,7 @@ func main() {
 		{
 			Name:    "save",
 			Aliases: []string{"s"},
-			Usage:   `snippets save "lsof -i :{p}"`,
+			Usage:   `snip save "lsof -i :{p}"`,
 			Action:  Action(snippetCli.Save),
 		},
 	}
