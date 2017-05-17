@@ -10,7 +10,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/baopham/snippets-cli/util"
+	"github.com/baopham/snip/util"
 )
 
 // EOL end of line
@@ -108,7 +108,7 @@ func SnippetDir() (string, error) {
 		return "", err
 	}
 
-	dir := path.Join(currentUser.HomeDir, ".snippets-cli")
+	dir := path.Join(currentUser.HomeDir, ".snip")
 
 	return dir, nil
 }

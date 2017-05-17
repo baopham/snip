@@ -1,4 +1,4 @@
-snippets-cli
+snip
 ============
 [WIP] Command line to save snippets, shortcuts, commands, etc.
 
@@ -6,7 +6,7 @@ snippets-cli
 Install:
 ------
 ```
-go get github.com/baopham/snippets-cli
+go get github.com/baopham/snip
 ```
 
 Make sure you have `$GOPATH` set and `$GOPATH/bin` is in the `$PATH`, e.g.:

@@ -1,7 +1,7 @@
 package snippet_test
 
 import (
-	. "github.com/baopham/snippets-cli/snippet"
+	. "github.com/baopham/snip/snippet"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"io/ioutil"
@@ -47,7 +47,7 @@ var _ = Describe("Snippet", func() {
 
 	Context("when calling snippet.Save()", func() {
 		It("should save the snippet", func() {
-			By("appending the snippet to file ~/.snippets-cli/snippets")
+			By("appending the snippet to file ~/.snip/snippets")
 
 			snippet := Snippet{
 				Keyword:     "port",
