@@ -1,4 +1,4 @@
-package snippets_test
+package snippet_test
 
 import (
 	. "github.com/onsi/ginkgo"
@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestSnippets(t *testing.T) {
+func TestSnippet(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Snippets Suite")
+	RunSpecs(t, "Snippet Suite")
 }

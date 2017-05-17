@@ -1,7 +1,7 @@
-package snippets_test
+package snippet_test
 
 import (
-	. "github.com/baopham/snippets-cli/snippets"
+	. "github.com/baopham/snippets-cli/snippet"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"io/ioutil"
@@ -45,7 +45,7 @@ var _ = Describe("Snippet", func() {
 		removeFakeFile(fakeFilePath)
 	})
 
-	Context("when calling Save()", func() {
+	Context("when calling snippet.Save()", func() {
 		It("should save the snippet", func() {
 			By("appending the snippet to file ~/.snippets-cli/snippets")
 
@@ -64,7 +64,7 @@ var _ = Describe("Snippet", func() {
 		})
 	})
 
-	Context("when calling Save() multiple times", func() {
+	Context("when saving multiple snippets", func() {
 		It("should save the snippets with correct separator", func() {
 			snippet1 := Snippet{
 				Keyword:     "port",
@@ -179,9 +179,43 @@ var _ = Describe("Snippet", func() {
 
 			err := snippet.Save(fakeFilePath)
 
-			By("Returning SnippetAlreadyExistError error")
+			By("returning SnippetAlreadyExistError error")
 
 			Expect(err).To(MatchError(SnippetAlreadyExistError{Keyword: snippet.Keyword}))
+		})
+	})
+
+	Context("when calling snippet.Build()", func() {
+		It("should build the snippet using the given placeholders", func() {
+			By("replacing one placeholder")
+
+			snippet := Snippet{
+				Keyword:     "port",
+				Description: "Find processes using a certain port",
+				Content:     "lsof -i :{p}",
+			}
+
+			content := snippet.Build(map[string]string{
+				"p": "9001",
+			})
+
+			Expect(content).To(Equal("lsof -i :9001"))
+
+			By("replacing multiple placeholders including duplicates")
+
+			snippet = Snippet{
+				Keyword:     "foo",
+				Description: "Foo bar",
+				Content:     "{a} foo {b} bar {c} {a} {b} {c}",
+			}
+
+			content = snippet.Build(map[string]string{
+				"a": "A",
+				"b": "B",
+				"c": "C",
+			})
+
+			Expect(content).To(Equal("A foo B bar C A B C"))
 		})
 	})
 })

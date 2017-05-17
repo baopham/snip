@@ -1,4 +1,4 @@
-package snippets
+package snippet
 
 import (
 	"bufio"
@@ -87,6 +87,17 @@ func Search(keyword string, filePath string) ([]*Snippet, error) {
 
 func (s *Snippet) String() string {
 	return fmt.Sprintf("%s|%s|%s", s.Keyword, s.Content, s.Description)
+}
+
+// Build snippet actual content using the given placeholders
+func (s *Snippet) Build(placeholders map[string]string) string {
+	content := s.Content
+
+	for k, v := range placeholders {
+		content = strings.Replace(content, fmt.Sprintf("{%s}", k), v, -1)
+	}
+
+	return content
 }
 
 // SnippetDir returns the default directory path to the saved snippets
@@ -204,9 +215,9 @@ func searchByKeyword(keyword string, filePath string, exact bool) ([]*Snippet, e
 }
 
 func fuzzyMatcher(keyword string, content string) bool {
-	return regexp.MustCompile(fmt.Sprintf("^.*%s.*\\|", keyword)).MatchString(content)
+	return regexp.MustCompile(fmt.Sprintf(`^.*%s.*\|`, keyword)).MatchString(content)
 }
 
 func exactMatcher(keyword string, content string) bool {
-	return regexp.MustCompile(fmt.Sprintf("^%s\\|", keyword)).MatchString(content)
+	return regexp.MustCompile(fmt.Sprintf(`^%s\|`, keyword)).MatchString(content)
 }
