@@ -52,6 +52,12 @@ func main() {
 			Usage:   `snip search port`,
 			Action:  Action(snippetCli.Search),
 		},
+		{
+			Name:    "execute",
+			Aliases: []string{"x"},
+			Usage:   "get snippet",
+			Action:  Action(snippetCli.Execute),
+		},
 	}
 
 	app.Run(os.Args)
