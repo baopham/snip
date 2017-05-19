@@ -2,6 +2,19 @@ snip
 ============
 Command line interface to save snippets, shortcuts, commands, etc.
 
+Table of Content
+----------------
+* [Usage](#usage)
+    * [Add](#add)
+    * [List](#list)
+    * [Search](#search)
+    * [Execute](#execute)
+    * [Remove](#remove)
+* [Install](#install)
+* [Requirements](#requirements)
+* [License](#license)
+* [Author](#author)
+
 
 Usage
 --------
