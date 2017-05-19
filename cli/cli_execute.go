@@ -36,6 +36,10 @@ func Execute(c *cli.Context) error {
 		return err
 	}
 
+	if snippet == nil {
+		return NotFoundSnippet{Keyword: keyword}
+	}
+
 	content := snippet.Build(mapper)
 
 	err = clipboard.WriteAll(content)

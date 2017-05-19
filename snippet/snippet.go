@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/user"
 	"path"
@@ -18,6 +19,8 @@ const EOL = "\n"
 
 // SnippetSeparator between 2 snippets
 const SnippetSeparator = ">>>>>>"
+
+const FileMode = 0600
 
 const (
 	SEARCH_EXACT     SearchCode = 1
@@ -36,7 +39,7 @@ type Snippet struct {
 
 // Save snippet
 func (s *Snippet) Save(filePath string) error {
-	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
+	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, FileMode)
 
 	if err != nil {
 		return err
@@ -71,6 +74,35 @@ func (s *Snippet) Save(filePath string) error {
 	}
 
 	return nil
+}
+
+// Remove a saved snippet
+func (s *Snippet) Remove(filePath string) error {
+	b, err := ioutil.ReadFile(filePath)
+
+	if err != nil {
+		return err
+	}
+
+	content := string(b)
+
+	re := regexp.MustCompile(fmt.Sprintf("(?m)(%s)*%s$%s*", SnippetSeparator+EOL, regexp.QuoteMeta(s.String()), EOL))
+
+	newContent := re.ReplaceAllString(content, "")
+
+	lines := strings.Split(newContent, EOL)
+
+	if lines[len(lines)-1] == "" {
+		lines = lines[:len(lines)-1]
+	}
+
+	if len(lines) > 0 && lines[0] == SnippetSeparator {
+		lines = lines[1:]
+	}
+
+	newContent = strings.Join(lines, EOL)
+
+	return ioutil.WriteFile(filePath, []byte(newContent), FileMode)
 }
 
 // Get all saved snippets
@@ -142,16 +174,23 @@ func SnippetFile() (string, error) {
 func init() {
 	dir, err := SnippetDir()
 
-	if err != nil {
-		panic(err)
-	}
+	panicIfError(err)
 
 	if _, err = os.Stat(dir); os.IsNotExist(err) {
 		err = os.MkdirAll(dir, 0755)
+		panicIfError(err)
+	}
 
-		if err != nil {
-			panic(err)
-		}
+	filePath, err := SnippetFile()
+
+	panicIfError(err)
+
+	_, err = os.Stat(filePath)
+
+	if os.IsNotExist(err) {
+		file, err := os.OpenFile(filePath, os.O_RDONLY|os.O_CREATE, FileMode)
+		panicIfError(err)
+		defer util.Check(file.Close)
 	}
 }
 
@@ -235,4 +274,10 @@ func fuzzyMatcher(keyword string, content string) bool {
 
 func exactMatcher(keyword string, content string) bool {
 	return regexp.MustCompile(fmt.Sprintf(`^%s\|`, keyword)).MatchString(content)
+}
+
+func panicIfError(e error) {
+	if e != nil {
+		panic(e)
+	}
 }

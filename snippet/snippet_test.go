@@ -1,6 +1,7 @@
 package snippet_test
 
 import (
+	"fmt"
 	. "github.com/baopham/snip/snippet"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -12,7 +13,8 @@ import (
 
 var _ = Describe("Snippet", func() {
 	var (
-		fakeFilePath string
+		fakeFilePath   string
+		snippetCounter = 1
 	)
 
 	saveSnippet := func(snippet Snippet, filePath string) {
@@ -27,6 +29,23 @@ var _ = Describe("Snippet", func() {
 				panic(err)
 			}
 		}
+	}
+
+	getFileContent := func(fakeFilePath string) string {
+		b, err := ioutil.ReadFile(fakeFilePath)
+		Expect(err).To(BeNil())
+		return string(b)
+	}
+
+	seedSnippet := func() Snippet {
+		counter := fmt.Sprint(snippetCounter)
+		snippet := Snippet{
+			Keyword:     "keyword " + counter,
+			Description: "description " + counter,
+			Content:     "content " + counter,
+		}
+		snippetCounter++
+		return snippet
 	}
 
 	BeforeEach(func() {
@@ -49,43 +68,27 @@ var _ = Describe("Snippet", func() {
 		It("should save the snippet", func() {
 			By("appending the snippet to file ~/.snip/snippets")
 
-			snippet := Snippet{
-				Keyword:     "port",
-				Description: "Find processes using a certain port",
-				Content:     "lsof -i :{p}",
-			}
+			snippet := seedSnippet()
 
 			saveSnippet(snippet, fakeFilePath)
 
-			b, err := ioutil.ReadFile(fakeFilePath)
-			Expect(err).To(BeNil())
+			content := getFileContent(fakeFilePath)
 
-			Expect(string(b)).To(ContainSubstring(snippet.String()))
+			Expect(content).To(ContainSubstring(snippet.String()))
 		})
 	})
 
 	Context("when saving multiple snippets", func() {
 		It("should save the snippets with correct separator", func() {
-			snippet1 := Snippet{
-				Keyword:     "port",
-				Description: "Find processes using a certain port",
-				Content:     "lsof -i :{p}",
-			}
+			snippet1 := seedSnippet()
 
 			saveSnippet(snippet1, fakeFilePath)
 
-			snippet2 := Snippet{
-				Keyword:     "docker-ssh",
-				Description: "SSH into docker container",
-				Content:     "docker exec -it {id} bash",
-			}
+			snippet2 := seedSnippet()
 
 			saveSnippet(snippet2, fakeFilePath)
 
-			b, err := ioutil.ReadFile(fakeFilePath)
-			Expect(err).To(BeNil())
-
-			content := strings.Split(string(b), EOL+SnippetSeparator+EOL)
+			content := strings.Split(getFileContent(fakeFilePath), EOL+SnippetSeparator+EOL)
 
 			Expect(content[0]).To(Equal(snippet1.String()))
 			Expect(content[1]).To(Equal(snippet2.String()))
@@ -94,21 +97,11 @@ var _ = Describe("Snippet", func() {
 
 	Context("when snippet having multiple lines", func() {
 		It("should save the snippet correctly", func() {
-			snippet := Snippet{
-				Keyword:     "foo",
-				Description: "Some long command",
-				Content: `foo
-				bar
-				foobar
-				`,
-			}
+			snippet := seedSnippet()
 
 			saveSnippet(snippet, fakeFilePath)
 
-			b, err := ioutil.ReadFile(fakeFilePath)
-			Expect(err).To(BeNil())
-
-			content := string(b)
+			content := getFileContent(fakeFilePath)
 
 			Expect(content).To(ContainSubstring(snippet.String()))
 			Expect(content).To(ContainSubstring(snippet.Content))
@@ -117,11 +110,7 @@ var _ = Describe("Snippet", func() {
 
 	Context("when calling SearchExact() by an existing keyword", func() {
 		It("should return the found Snippet", func() {
-			snippet := Snippet{
-				Keyword:     "docker-ssh",
-				Description: "SSH into docker container",
-				Content:     "docker exec -it {id} bash",
-			}
+			snippet := seedSnippet()
 
 			saveSnippet(snippet, fakeFilePath)
 
@@ -143,18 +132,14 @@ var _ = Describe("Snippet", func() {
 			saveSnippet(snippet1, fakeFilePath)
 
 			snippet2 := Snippet{
-				Keyword:     "port-v2",
+				Keyword:     "port2",
 				Description: "Find processes using a certain port",
 				Content:     "lsof -i :{p}",
 			}
 
 			saveSnippet(snippet2, fakeFilePath)
 
-			snippet3 := Snippet{
-				Keyword:     "foo",
-				Description: "Foo bar",
-				Content:     "foo bar",
-			}
+			snippet3 := seedSnippet()
 
 			saveSnippet(snippet3, fakeFilePath)
 
@@ -169,11 +154,7 @@ var _ = Describe("Snippet", func() {
 
 	Context("when saving the same snippet (same keyword)", func() {
 		It("should not save it again", func() {
-			snippet := Snippet{
-				Keyword:     "port",
-				Description: "Find processes using a certain port",
-				Content:     "lsof -i :{p}",
-			}
+			snippet := seedSnippet()
 
 			saveSnippet(snippet, fakeFilePath)
 
@@ -216,6 +197,88 @@ var _ = Describe("Snippet", func() {
 			})
 
 			Expect(content).To(Equal("A foo B bar C A B C"))
+		})
+	})
+
+	Context("when calling snippet.Remove()", func() {
+		separator := EOL + SnippetSeparator + EOL
+
+		saveThreeSnippets := func() (Snippet, Snippet, Snippet) {
+			By("saving 3 snippets")
+
+			snippet1 := seedSnippet()
+
+			saveSnippet(snippet1, fakeFilePath)
+
+			snippet2 := seedSnippet()
+
+			saveSnippet(snippet2, fakeFilePath)
+
+			snippet3 := seedSnippet()
+
+			saveSnippet(snippet3, fakeFilePath)
+
+			content := getFileContent(fakeFilePath)
+
+			By("checking that the snippets are indeed saved")
+
+			Expect(content).To(Equal(snippet1.String() + separator + snippet2.String() + separator + snippet3.String()))
+
+			return snippet1, snippet2, snippet3
+		}
+
+		Context("when removing the first saved snippet", func() {
+			It("should remove the snippet from the file", func() {
+				snippet1, snippet2, snippet3 := saveThreeSnippets()
+
+				By("removing the first snippet that was saved")
+
+				err := snippet1.Remove(fakeFilePath)
+
+				Expect(err).To(BeNil())
+
+				By("checking that now the first snippet is removed")
+
+				newContent := getFileContent(fakeFilePath)
+
+				Expect(newContent).To(Equal(snippet2.String() + separator + snippet3.String()))
+			})
+		})
+
+		Context("when removing the last saved snippet", func() {
+			It("should remove the snippet from the file", func() {
+				snippet1, snippet2, snippet3 := saveThreeSnippets()
+
+				By("removing the last snippet that was saved")
+
+				err := snippet3.Remove(fakeFilePath)
+
+				Expect(err).To(BeNil())
+
+				By("checking that now the last snippet is removed")
+
+				newContent := getFileContent(fakeFilePath)
+
+				Expect(newContent).To(Equal(snippet1.String() + separator + snippet2.String()))
+			})
+		})
+
+		Context("when removing the middle saved snippet", func() {
+			It("should remove the snippet from the file", func() {
+				snippet1, snippet2, snippet3 := saveThreeSnippets()
+
+				By("removing the middle snippet that was saved")
+
+				err := snippet2.Remove(fakeFilePath)
+
+				Expect(err).To(BeNil())
+
+				By("checking that now the middle snippet is removed")
+
+				newContent := getFileContent(fakeFilePath)
+
+				Expect(newContent).To(Equal(snippet1.String() + separator + snippet3.String()))
+			})
 		})
 	})
 })

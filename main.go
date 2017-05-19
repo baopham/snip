@@ -64,6 +64,12 @@ func main() {
 			Usage:   "list all saved snippets",
 			Action:  Action(snippetCli.List),
 		},
+		{
+			Name:    "remove",
+			Aliases: []string{"r"},
+			Usage:   "remove a saved snippet",
+			Action:  Action(snippetCli.Remove),
+		},
 	}
 
 	app.Run(os.Args)
