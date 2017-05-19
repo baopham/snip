@@ -3,7 +3,7 @@ snip
 Command line interface to save snippets, shortcuts, commands, etc.
 
 
-Usage:
+Usage
 --------
 ```
 NAME:
@@ -28,7 +28,7 @@ GLOBAL OPTIONS:
    --version, -v  print the version
 ```
 
-## Add
+### Add
 
 ```bash
 snip add -k="port" -c="lsof -i :{p}" -desc="List processes listening on a particular port"
@@ -36,7 +36,7 @@ snip add -k="port" -c="lsof -i :{p}" -desc="List processes listening on a partic
 
 Use `{placeholder}` for placeholders. See [Execute](#execute) to check how it can be used
 
-## List
+### List
 
 ```bash
 snip list
@@ -46,7 +46,7 @@ you should see:
 
 ![list](screenshots/list.png)
 
-## Search
+### Search
 
 ```bash
 snip search port
@@ -56,7 +56,7 @@ you should see:
 
 ![search](screenshots/search.png)
 
-## Execute
+### Execute
 
 ```bash
 snip execute port p=9000
@@ -66,7 +66,7 @@ This will replace the placeholder `{p}` with `9000`:
 
 ![execute](screenshots/execute.png)
 
-## Remove
+### Remove
 
 ```bash
 snip remove port
@@ -75,7 +75,7 @@ snip remove port
 To remove a snippet by keyword
 
 
-Install:
+Install
 ------
 ```
 go get github.com/baopham/snip
@@ -88,14 +88,14 @@ export GOPATH=$HOME/Projects/Go
 export PATH=$PATH:/usr/local/opt/go/libexec/bin:$GOPATH/bin
 ```
 
-Requirements:
+Requirements
 -------------
 * Go ^1.8
 
-License:
+License
 --------
 MIT
 
-Author:
+Author
 -------
 Bao Pham
