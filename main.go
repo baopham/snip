@@ -50,25 +50,25 @@ func main() {
 		{
 			Name:    "search",
 			Aliases: []string{"s"},
-			Usage:   `snip search port`,
+			Usage:   "search for snippets by keyword: snip search port",
 			Action:  Action(snippetCli.Search),
 		},
 		{
 			Name:    "execute",
 			Aliases: []string{"x"},
-			Usage:   "get snippet",
+			Usage:   "get the snippet by keyword: snip x port p={9000}",
 			Action:  Action(snippetCli.Execute),
 		},
 		{
 			Name:    "list",
 			Aliases: []string{"l"},
-			Usage:   "list all saved snippets",
+			Usage:   "list all saved snippets: snip list",
 			Action:  Action(snippetCli.List),
 		},
 		{
 			Name:    "remove",
 			Aliases: []string{"r"},
-			Usage:   "remove a saved snippet",
+			Usage:   "remove a saved snippet: snip remove port",
 			Action:  Action(snippetCli.Remove),
 		},
 	}
