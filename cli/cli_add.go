@@ -14,11 +14,11 @@ func Add(c *cli.Context) error {
 		Trim(c.String("content")), Trim(c.String("desc"))
 
 	if keyword == "" {
-		return MissingArgumentError{Message: "Please specify your keyword"}
+		return MissingInfoError{Message: "Please specify your keyword"}
 	}
 
 	if content == "" {
-		return MissingArgumentError{Message: "Please specify your snippet"}
+		return MissingInfoError{Message: "Please specify your snippet"}
 	}
 
 	snippet := s.Snippet{

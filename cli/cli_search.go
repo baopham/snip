@@ -12,7 +12,7 @@ func Search(c *cli.Context) error {
 	keyword := strings.TrimSpace(c.Args().First())
 
 	if keyword == "" {
-		return MissingArgumentError{Message: "Please specify your keyword"}
+		return MissingInfoError{Message: "Please specify your keyword"}
 	}
 
 	filePath, err := s.SnippetFile()

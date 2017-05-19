@@ -1,9 +1,10 @@
 package cli
 
-type MissingArgumentError struct {
+type MissingInfoError struct {
 	Message string
 }
 
-func (e MissingArgumentError) Error() string {
+func (e MissingInfoError) Error() string {
 	return e.Message
 }
+
