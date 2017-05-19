@@ -19,6 +19,14 @@ const EOL = "\n"
 // SnippetSeparator between 2 snippets
 const SnippetSeparator = ">>>>>>"
 
+const (
+	SEARCH_EXACT     SearchCode = 1
+	SEARCH_FUZZY     SearchCode = 2
+	SEARCH_MATCH_ANY SearchCode = 3
+)
+
+type SearchCode int
+
 // Snippet represents the snippet
 type Snippet struct {
 	Keyword     string
@@ -65,9 +73,14 @@ func (s *Snippet) Save(filePath string) error {
 	return nil
 }
 
+// Get all saved snippets
+func GetAll(filePath string) ([]*Snippet, error) {
+	return searchByKeyword("", filePath, SEARCH_MATCH_ANY)
+}
+
 // SearchExact exact search by keyword
 func SearchExact(keyword string, filePath string) (*Snippet, error) {
-	snippets, err := searchByKeyword(keyword, filePath, true)
+	snippets, err := searchByKeyword(keyword, filePath, SEARCH_EXACT)
 
 	if err != nil {
 		return nil, err
@@ -82,7 +95,7 @@ func SearchExact(keyword string, filePath string) (*Snippet, error) {
 
 // Search fuzzy search by keyword
 func Search(keyword string, filePath string) ([]*Snippet, error) {
-	return searchByKeyword(keyword, filePath, false)
+	return searchByKeyword(keyword, filePath, SEARCH_FUZZY)
 }
 
 func (s *Snippet) String() string {
@@ -172,7 +185,7 @@ func getScanner(file *os.File) *bufio.Scanner {
 	return scanner
 }
 
-func searchByKeyword(keyword string, filePath string, exact bool) ([]*Snippet, error) {
+func searchByKeyword(keyword string, filePath string, exact SearchCode) ([]*Snippet, error) {
 	var snippets []*Snippet
 
 	file, err := os.Open(filePath)
@@ -185,8 +198,10 @@ func searchByKeyword(keyword string, filePath string, exact bool) ([]*Snippet, e
 
 	matcher := fuzzyMatcher
 
-	if exact {
+	if exact == SEARCH_EXACT {
 		matcher = exactMatcher
+	} else if exact == SEARCH_MATCH_ANY {
+		matcher = func(k, c string) bool { return true }
 	}
 
 	for line := 1; scanner.Scan(); line++ {
@@ -206,7 +221,7 @@ func searchByKeyword(keyword string, filePath string, exact bool) ([]*Snippet, e
 
 		snippets = append(snippets, found)
 
-		if exact {
+		if exact == SEARCH_EXACT {
 			return snippets, nil
 		}
 	}

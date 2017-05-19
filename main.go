@@ -58,6 +58,12 @@ func main() {
 			Usage:   "get snippet",
 			Action:  Action(snippetCli.Execute),
 		},
+		{
+			Name:    "list",
+			Aliases: []string{"l"},
+			Usage:   "list all saved snippets",
+			Action:  Action(snippetCli.List),
+		},
 	}
 
 	app.Run(os.Args)
