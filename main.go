@@ -57,7 +57,14 @@ func main() {
 			Name:    "execute",
 			Aliases: []string{"x"},
 			Usage:   "get the snippet by keyword: snip x port p={9000}",
-			Action:  Action(snippetCli.Execute),
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name: "output, o",
+					Usage: "execute right away and save the output to clipboard. " +
+						"Without this option, the snippet will be saved to the clipboard instead",
+				},
+			},
+			Action: Action(snippetCli.Execute),
 		},
 		{
 			Name:    "list",

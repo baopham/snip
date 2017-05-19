@@ -6,6 +6,7 @@ import (
 	s "github.com/baopham/snip/snippet"
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
+	"os/exec"
 	"strings"
 )
 
@@ -15,10 +16,6 @@ func Execute(c *cli.Context) error {
 
 	if keyword == "" {
 		return MissingInfoError{Message: "Please specify your keyword"}
-	}
-
-	if placeholderMap == "" {
-
 	}
 
 	filePath, err := s.SnippetFile()
@@ -42,13 +39,25 @@ func Execute(c *cli.Context) error {
 
 	content := snippet.Build(mapper)
 
-	err = clipboard.WriteAll(content)
+	message := fmt.Sprintf("`%s` has been saved to your clipboard", content)
+
+	if c.Bool("output") {
+		message = fmt.Sprintf("`%s` *output* has been saved to your clipboard", content)
+		parts := strings.Fields(content)
+		command := exec.Command(parts[0], parts[1:]...)
+		output, err := command.Output()
+		if err == nil {
+			err = clipboard.WriteAll(string(output))
+		}
+	} else {
+		err = clipboard.WriteAll(content)
+	}
 
 	if err != nil {
 		return err
 	}
 
-	color.Green(fmt.Sprintf("`%s` has been saved to your clipboard", content))
+	color.Green(message)
 
 	return nil
 }

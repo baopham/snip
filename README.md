@@ -79,6 +79,12 @@ This will replace the placeholder `{p}` with `9000`:
 
 ![execute](screenshots/execute.png)
 
+Or, add `--ouput` / `-o` option to save the *output* of the command to the clipboard
+
+```bash
+snip x port p=9000 -o
+```
+
 ### Remove
 
 ```bash
