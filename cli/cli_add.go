@@ -1,7 +1,7 @@
 package cli
 
 import (
-	. "github.com/baopham/snip/snippet"
+	s "github.com/baopham/snip/snippet"
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
 	"strings"
@@ -21,13 +21,13 @@ func Add(c *cli.Context) error {
 		return MissingArgumentError{Message: "Please specify your snippet"}
 	}
 
-	snippet := Snippet{
+	snippet := s.Snippet{
 		Keyword:     keyword,
 		Content:     content,
 		Description: description,
 	}
 
-	filePath, err := SnippetFile()
+	filePath, err := s.SnippetFile()
 
 	if err != nil {
 		return err
