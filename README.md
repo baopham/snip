@@ -34,7 +34,7 @@ GLOBAL OPTIONS:
 snip add -k="port" -c="lsof -i :{p}" -desc="List processes listening on a particular port"
 ```
 
-Use `{placeholder}` for placeholders. See [Execute](#execute) to check how it can be used
+Use `{placeholder}` for placeholders. See [Execute](#execute) for more on this
 
 ### List
 
