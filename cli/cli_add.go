@@ -9,9 +9,9 @@ import (
 
 var Trim = strings.TrimSpace
 
-func Save(c *cli.Context) error {
-	args := c.Args()
-	keyword, content, description := Trim(args.First()), Trim(args.Get(1)), Trim(args.Get(2))
+func Add(c *cli.Context) error {
+	keyword, content, description := Trim(c.String("keyword")),
+		Trim(c.String("content")), Trim(c.String("desc"))
 
 	if keyword == "" {
 		return MissingArgumentError{Message: "Please specify your keyword"}
