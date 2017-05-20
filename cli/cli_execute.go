@@ -12,7 +12,6 @@ import (
 
 func Execute(c *cli.Context) error {
 	keyword := strings.TrimSpace(c.Args().First())
-	placeholderMap := strings.TrimSpace(c.Args().Get(1))
 
 	if keyword == "" {
 		return MissingInfoError{Message: "Please specify your keyword"}
@@ -24,7 +23,7 @@ func Execute(c *cli.Context) error {
 		return err
 	}
 
-	mapper := convertPlaceholderMap(placeholderMap)
+	mapper := getPlaceholderMapper(c.Args())
 
 	// TODO: allow to select from a list
 	snippet, err := s.SearchExact(keyword, filePath)
@@ -62,14 +61,16 @@ func Execute(c *cli.Context) error {
 	return nil
 }
 
-func convertPlaceholderMap(placeholderMap string) map[string]string {
+func getPlaceholderMapper(args cli.Args) map[string]string {
 	mapper := make(map[string]string)
+	i := 1
+	pair := args.Get(i)
 
-	placeholderPairs := strings.Fields(placeholderMap)
-
-	for _, pair := range placeholderPairs {
+	for pair != "" {
 		parts := strings.Split(pair, "=")
-		mapper[parts[0]] = parts[1]
+		mapper[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
+		pair = args.Get(i)
+		i++
 	}
 
 	return mapper
