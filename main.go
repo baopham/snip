@@ -23,7 +23,7 @@ func Action(fn func(c *cli.Context) error) func(c *cli.Context) error {
 
 func main() {
 	app := cli.NewApp()
-	app.Version = "1.0.0"
+	app.Version = "1.0.1"
 	app.Usage = "Save snippets: commands, texts, emoji, etc."
 	app.EnableBashCompletion = true
 	app.Commands = []cli.Command{

@@ -26,7 +26,7 @@ USAGE:
    snip [global options] command [command options] [arguments...]
 
 VERSION:
-   1.0.0
+   1.0.1
 
 COMMANDS:
      add, a      snip add -k="port" -c="lsof -i :{p}" -desc="List processes listening on a particular port"
@@ -84,6 +84,8 @@ Or, add `--ouput` / `-o` option to save the *output* of the command to the clipb
 ```bash
 snip x port p=9000 -o
 ```
+
+> For multiple placeholders {p} {a} {b}: snip x port p=9000 a=hello b=world
 
 ### Remove
 
