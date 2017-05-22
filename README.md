@@ -10,8 +10,9 @@ Table of Content
     * [Search](#search)
     * [Execute](#execute)
     * [Remove](#remove)
-* [Install](#install)
 * [Requirements](#requirements)
+* [Install](#install)
+* [Test](#test)
 * [License](#license)
 * [Author](#author)
 
@@ -96,6 +97,10 @@ snip remove port
 To remove a snippet by keyword
 
 
+Requirements
+-------------
+* Go ^1.8
+
 Install
 ------
 ```
@@ -109,9 +114,15 @@ export GOPATH=$HOME/Projects/Go
 export PATH=$PATH:/usr/local/opt/go/libexec/bin:$GOPATH/bin
 ```
 
-Requirements
--------------
-* Go ^1.8
+Test
+----
+
+```
+go get github.com/onsi/ginkgo/ginkgo
+go get github.com/onsi/gomega
+ginkgo -r
+```
+
 
 License
 --------
