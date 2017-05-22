@@ -104,7 +104,7 @@ Requirements
 Install
 ------
 ```
-go get github.com/baopham/snip
+go get -u github.com/baopham/snip
 ```
 
 Make sure you have `$GOPATH` set and `$GOPATH/bin` is in the `$PATH`, e.g.:
