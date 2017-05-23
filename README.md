@@ -31,7 +31,7 @@ VERSION:
 
 COMMANDS:
      add, a      snip add -k="port" -c="lsof -i :{p}" -desc="List processes listening on a particular port"
-     search, s   search for snippets by keyword: snip search port
+     search, s   search for snippets: snip search port
      execute, x  get the snippet by keyword: snip x port p={9000}
      list, l     list all saved snippets: snip list
      remove, r   remove a saved snippet: snip remove port
