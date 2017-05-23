@@ -65,7 +65,7 @@ you should see:
 ```bash
 # by substring of keyword
 snip search port
-# by substrings of description
+# by substring of description
 snip search "list process"
 ```
 
