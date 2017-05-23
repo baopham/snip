@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/baopham/snip/util"
+	"github.com/renstrom/fuzzysearch/fuzzy"
 )
 
 // EOL end of line
@@ -107,12 +108,12 @@ func (s *Snippet) Remove(filePath string) error {
 
 // Get all saved snippets
 func GetAll(filePath string) ([]*Snippet, error) {
-	return searchByKeyword("", filePath, SEARCH_MATCH_ANY)
+	return searchSnippets("", filePath, SEARCH_MATCH_ANY)
 }
 
 // SearchExact exact search by keyword
 func SearchExact(keyword string, filePath string) (*Snippet, error) {
-	snippets, err := searchByKeyword(keyword, filePath, SEARCH_EXACT)
+	snippets, err := searchSnippets(keyword, filePath, SEARCH_EXACT)
 
 	if err != nil {
 		return nil, err
@@ -125,9 +126,9 @@ func SearchExact(keyword string, filePath string) (*Snippet, error) {
 	return snippets[0], nil
 }
 
-// Search fuzzy search by keyword
-func Search(keyword string, filePath string) ([]*Snippet, error) {
-	return searchByKeyword(keyword, filePath, SEARCH_FUZZY)
+// Search fuzzy search by given search term
+func Search(searchTerm string, filePath string) ([]*Snippet, error) {
+	return searchSnippets(searchTerm, filePath, SEARCH_FUZZY)
 }
 
 func (s *Snippet) String() string {
@@ -224,7 +225,7 @@ func getScanner(file *os.File) *bufio.Scanner {
 	return scanner
 }
 
-func searchByKeyword(keyword string, filePath string, exact SearchCode) ([]*Snippet, error) {
+func searchSnippets(searchTerm string, filePath string, exact SearchCode) ([]*Snippet, error) {
 	var snippets []*Snippet
 
 	file, err := os.Open(filePath)
@@ -235,7 +236,7 @@ func searchByKeyword(keyword string, filePath string, exact SearchCode) ([]*Snip
 
 	scanner := getScanner(file)
 
-	matcher := fuzzyMatcher
+	matcher := fuzzy.MatchFold
 
 	if exact == SEARCH_EXACT {
 		matcher = exactMatcher
@@ -246,7 +247,7 @@ func searchByKeyword(keyword string, filePath string, exact SearchCode) ([]*Snip
 	for line := 1; scanner.Scan(); line++ {
 		lineContent := scanner.Text()
 
-		if !matcher(keyword, lineContent) {
+		if !matcher(searchTerm, lineContent) {
 			continue
 		}
 
@@ -268,12 +269,8 @@ func searchByKeyword(keyword string, filePath string, exact SearchCode) ([]*Snip
 	return snippets, nil
 }
 
-func fuzzyMatcher(keyword string, content string) bool {
-	return regexp.MustCompile(fmt.Sprintf(`^.*%s.*\|`, keyword)).MatchString(content)
-}
-
-func exactMatcher(keyword string, content string) bool {
-	return regexp.MustCompile(fmt.Sprintf(`^%s\|`, keyword)).MatchString(content)
+func exactMatcher(source string, target string) bool {
+	return regexp.MustCompile(fmt.Sprintf(`^%s\|`, source)).MatchString(target)
 }
 
 func panicIfError(e error) {

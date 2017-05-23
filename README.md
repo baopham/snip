@@ -27,7 +27,7 @@ USAGE:
    snip [global options] command [command options] [arguments...]
 
 VERSION:
-   1.0.1
+   1.0.2
 
 COMMANDS:
      add, a      snip add -k="port" -c="lsof -i :{p}" -desc="List processes listening on a particular port"
@@ -63,7 +63,10 @@ you should see:
 ### Search
 
 ```bash
+# by substring of keyword
 snip search port
+# by substrings of description
+snip search "list process"
 ```
 
 you should see:

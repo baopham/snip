@@ -9,9 +9,9 @@ import (
 )
 
 func Search(c *cli.Context) error {
-	keyword := strings.TrimSpace(c.Args().First())
+	searchTerm := strings.TrimSpace(c.Args().First())
 
-	if keyword == "" {
+	if searchTerm == "" {
 		return MissingInfoError{Message: "Please specify your keyword"}
 	}
 
@@ -21,7 +21,7 @@ func Search(c *cli.Context) error {
 		return err
 	}
 
-	snippets, err := s.Search(keyword, filePath)
+	snippets, err := s.Search(searchTerm, filePath)
 
 	if err != nil {
 		return err

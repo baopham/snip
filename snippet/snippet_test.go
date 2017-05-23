@@ -121,34 +121,43 @@ var _ = Describe("Snippet", func() {
 		})
 	})
 
-	Context("when calling Search() by a keyword", func() {
-		It("should return all the found snippets that fuzzy match the keyword", func() {
-			snippet1 := Snippet{
+	Context("when calling Search()", func() {
+		var snippet1, snippet2, snippet3 Snippet
+
+		BeforeEach(func() {
+			snippet1 = Snippet{
 				Keyword:     "port",
 				Description: "Find processes using a certain port",
 				Content:     "lsof -i :{p}",
 			}
-
 			saveSnippet(snippet1, fakeFilePath)
-
-			snippet2 := Snippet{
+			snippet2 = Snippet{
 				Keyword:     "port2",
 				Description: "Find processes using a certain port",
 				Content:     "lsof -i :{p}",
 			}
-
 			saveSnippet(snippet2, fakeFilePath)
-
-			snippet3 := seedSnippet()
-
+			snippet3 = seedSnippet()
 			saveSnippet(snippet3, fakeFilePath)
+		})
 
-			found, err := Search("port", fakeFilePath)
+		assertSearchResult := func(searchTerm string) {
+			found, err := Search(searchTerm, fakeFilePath)
 			Expect(err).To(BeNil())
 
 			Expect(found).To(HaveLen(2))
 			Expect(*found[0]).To(Equal(snippet1))
 			Expect(*found[1]).To(Equal(snippet2))
+		}
+
+		It("should return all the found snippets that fuzzy match the search term", func() {
+			By("searching by substring of keyword")
+
+			assertSearchResult("port")
+
+			By("searching by substring of description")
+
+			assertSearchResult("find process")
 		})
 	})
 

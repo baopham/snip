@@ -23,7 +23,7 @@ func Action(fn func(c *cli.Context) error) func(c *cli.Context) error {
 
 func main() {
 	app := cli.NewApp()
-	app.Version = "1.0.1"
+	app.Version = "1.0.2"
 	app.Usage = "Save snippets: commands, texts, emoji, etc."
 	app.EnableBashCompletion = true
 	app.Commands = []cli.Command{
@@ -50,7 +50,7 @@ func main() {
 		{
 			Name:    "search",
 			Aliases: []string{"s"},
-			Usage:   "search for snippets by keyword: snip search port",
+			Usage:   "search for snippets: snip search port",
 			Action:  Action(snippetCli.Search),
 		},
 		{
