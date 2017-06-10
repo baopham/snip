@@ -12,6 +12,7 @@ Table of Content
     * [Remove](#remove)
 * [Requirements](#requirements)
 * [Install](#install)
+* [Autocomplete](#autocomplete)
 * [Test](#test)
 * [License](#license)
 * [Author](#author)
@@ -115,6 +116,18 @@ Make sure you have `$GOPATH` set and `$GOPATH/bin` is in the `$PATH`, e.g.:
 ```bash
 export GOPATH=$HOME/Projects/Go
 export PATH=$PATH:/usr/local/opt/go/libexec/bin:$GOPATH/bin
+```
+
+Autocomplete
+-----------
+
+To have autocomplete enabled, source [snip_bash_autocomplete](autocomplete/snip_bash_autocomplete) or [snip_zsh_autocomplete](autocomplete/snip_zsh_autocomplete).
+E.g. copy one of these (depending on your shell) to `/local/path` and then add the below to your `.bashrc` or `.zhsrc`:
+
+```bash
+source /local/path/snip_bash_autocomplete
+# Or
+source /local/path/snip_zsh_autocomplete
 ```
 
 Test
