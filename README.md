@@ -28,7 +28,7 @@ USAGE:
    snip [global options] command [command options] [arguments...]
 
 VERSION:
-   1.0.2
+   2.0.0
 
 COMMANDS:
      add, a      snip add -k="port" -c="lsof -i :{p}" -desc="List processes listening on a particular port"

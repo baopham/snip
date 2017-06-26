@@ -1,25 +1,17 @@
 package snippet
 
 import (
-	"bufio"
-	"bytes"
+	"encoding/csv"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"os/user"
 	"path"
-	"regexp"
 	"strings"
 
 	"github.com/baopham/snip/util"
 	"github.com/renstrom/fuzzysearch/fuzzy"
 )
-
-// EOL end of line
-const EOL = "\n"
-
-// SnippetSeparator between 2 snippets
-const SnippetSeparator = ">>>>>>"
 
 const FileMode = 0600
 
@@ -42,6 +34,8 @@ type Snippet struct {
 func (s *Snippet) Save(filePath string) error {
 	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, FileMode)
 
+	defer util.Check(file.Close)
+
 	if err != nil {
 		return err
 	}
@@ -56,54 +50,62 @@ func (s *Snippet) Save(filePath string) error {
 		return SnippetAlreadyExistError{Keyword: existingSnippet.Keyword}
 	}
 
-	defer util.Check(file.Close)
+	w := csv.NewWriter(file)
 
-	info, err := file.Stat()
-
-	if err != nil {
+	if err := w.Write([]string{s.Keyword, s.Content, s.Description}); err != nil {
 		return err
 	}
 
-	content := s.String()
+	w.Flush()
 
-	if info.Size() > 0 {
-		content = EOL + SnippetSeparator + EOL + content
-	}
-
-	if _, err = file.WriteString(content); err != nil {
-		return err
-	}
-
-	return nil
+	return w.Error()
 }
 
 // Remove a saved snippet
 func (s *Snippet) Remove(filePath string) error {
-	b, err := ioutil.ReadFile(filePath)
+	rows := make([][]string, 0)
+
+	file, err := os.Open(filePath)
 
 	if err != nil {
 		return err
 	}
 
-	content := string(b)
+	csvr := csv.NewReader(file)
 
-	re := regexp.MustCompile(fmt.Sprintf("(?m)(%s)*%s$%s*", SnippetSeparator+EOL, regexp.QuoteMeta(s.String()), EOL))
+	for {
+		row, err := csvr.Read()
 
-	newContent := re.ReplaceAllString(content, "")
+		if err == io.EOF {
+			break
+		}
 
-	lines := strings.Split(newContent, EOL)
+		if err != nil {
+			return err
+		}
 
-	if lines[len(lines)-1] == "" {
-		lines = lines[:len(lines)-1]
+		keyword, content, description := row[0], row[1], row[2]
+
+		if s.Keyword == keyword {
+			continue
+		}
+
+		rows = append(rows, []string{keyword, content, description})
 	}
 
-	if len(lines) > 0 && lines[0] == SnippetSeparator {
-		lines = lines[1:]
+	err = file.Close()
+
+	if err != nil {
+		return err
 	}
 
-	newContent = strings.Join(lines, EOL)
+	file, err = os.OpenFile(filePath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, FileMode)
 
-	return ioutil.WriteFile(filePath, []byte(newContent), FileMode)
+	defer util.Check(file.Close)
+
+	w := csv.NewWriter(file)
+
+	return w.WriteAll(rows)
 }
 
 // Get all saved snippets
@@ -112,7 +114,7 @@ func GetAll(filePath string) ([]*Snippet, error) {
 }
 
 // SearchExact exact search by keyword
-func SearchExact(keyword string, filePath string) (*Snippet, error) {
+func SearchExact(keyword, filePath string) (*Snippet, error) {
 	snippets, err := searchSnippets(keyword, filePath, SEARCH_EXACT)
 
 	if err != nil {
@@ -127,12 +129,8 @@ func SearchExact(keyword string, filePath string) (*Snippet, error) {
 }
 
 // Search fuzzy search by given search term
-func Search(searchTerm string, filePath string) ([]*Snippet, error) {
+func Search(searchTerm, filePath string) ([]*Snippet, error) {
 	return searchSnippets(searchTerm, filePath, SEARCH_FUZZY)
-}
-
-func (s *Snippet) String() string {
-	return fmt.Sprintf("%s|%s|%s", s.Keyword, s.Content, s.Description)
 }
 
 // Build snippet actual content using the given placeholders
@@ -167,7 +165,7 @@ func SnippetFile() (string, error) {
 		return "", err
 	}
 
-	filePath := path.Join(dir, "snippets")
+	filePath := path.Join(dir, "snippets.csv")
 
 	return filePath, err
 }
@@ -195,46 +193,15 @@ func init() {
 	}
 }
 
-func getScanner(file *os.File) *bufio.Scanner {
-	const splitSeparator = EOL + SnippetSeparator + EOL
-
-	trimSeparator := func(data []byte) []byte {
-		return bytes.Trim(data, splitSeparator)
-	}
-
-	splitter := func(data []byte, atEOF bool) (advanced int, token []byte, err error) {
-		if atEOF && len(data) == 0 {
-			return 0, nil, nil
-		}
-
-		if i := strings.Index(string(data), splitSeparator); i >= 0 {
-			return i + 1, trimSeparator(data[0:i]), nil
-		}
-
-		if atEOF {
-			return len(data), trimSeparator(data), nil
-		}
-
-		return
-	}
-
-	scanner := bufio.NewScanner(file)
-
-	scanner.Split(splitter)
-
-	return scanner
-}
-
-func searchSnippets(searchTerm string, filePath string, exact SearchCode) ([]*Snippet, error) {
+func searchSnippets(searchTerm, filePath string, exact SearchCode) ([]*Snippet, error) {
 	var snippets []*Snippet
 
 	file, err := os.Open(filePath)
+	defer util.Check(file.Close)
 
 	if err != nil {
 		return snippets, err
 	}
-
-	scanner := getScanner(file)
 
 	matcher := fuzzy.MatchFold
 
@@ -244,19 +211,29 @@ func searchSnippets(searchTerm string, filePath string, exact SearchCode) ([]*Sn
 		matcher = func(k, c string) bool { return true }
 	}
 
-	for line := 1; scanner.Scan(); line++ {
-		lineContent := scanner.Text()
+	csvr := csv.NewReader(file)
 
-		if !matcher(searchTerm, lineContent) {
+	for {
+		row, err := csvr.Read()
+
+		if err == io.EOF {
+			return snippets, nil
+		}
+
+		if err != nil {
+			return snippets, err
+		}
+
+		keyword, content, description := row[0], row[1], row[2]
+
+		if !matcher(searchTerm, keyword) && !matcher(searchTerm, content) && !matcher(searchTerm, description) {
 			continue
 		}
 
-		record := strings.Split(lineContent, "|")
-
 		found := &Snippet{
-			Keyword:     record[0],
-			Content:     record[1],
-			Description: record[2],
+			Keyword:     keyword,
+			Content:     content,
+			Description: description,
 		}
 
 		snippets = append(snippets, found)
@@ -270,7 +247,7 @@ func searchSnippets(searchTerm string, filePath string, exact SearchCode) ([]*Sn
 }
 
 func exactMatcher(source string, target string) bool {
-	return regexp.MustCompile(fmt.Sprintf(`^%s\|`, source)).MatchString(target)
+	return strings.TrimSpace(source) == strings.TrimSpace(target)
 }
 
 func panicIfError(e error) {

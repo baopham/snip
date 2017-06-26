@@ -11,6 +11,22 @@ import (
 	"strings"
 )
 
+type SnippetContent string
+
+func (c SnippetContent) mustContain(snippet Snippet) {
+	content := string(c)
+	Expect(content).To(ContainSubstring(snippet.Keyword))
+	Expect(content).To(ContainSubstring(snippet.Content))
+	Expect(content).To(ContainSubstring(snippet.Description))
+}
+
+func (c SnippetContent) mustNotContain(snippet Snippet) {
+	content := string(c)
+	Expect(content).ToNot(ContainSubstring(snippet.Keyword))
+	Expect(content).ToNot(ContainSubstring(snippet.Content))
+	Expect(content).ToNot(ContainSubstring(snippet.Description))
+}
+
 var _ = Describe("Snippet", func() {
 	var (
 		fakeFilePath   string
@@ -31,10 +47,11 @@ var _ = Describe("Snippet", func() {
 		}
 	}
 
-	getFileContent := func(fakeFilePath string) string {
+	getFileContent := func(fakeFilePath string) SnippetContent {
 		b, err := ioutil.ReadFile(fakeFilePath)
 		Expect(err).To(BeNil())
-		return string(b)
+		str := strings.TrimSpace(string(b))
+		return SnippetContent(str)
 	}
 
 	seedSnippet := func() Snippet {
@@ -74,12 +91,12 @@ var _ = Describe("Snippet", func() {
 
 			content := getFileContent(fakeFilePath)
 
-			Expect(content).To(ContainSubstring(snippet.String()))
+			content.mustContain(snippet)
 		})
 	})
 
 	Context("when saving multiple snippets", func() {
-		It("should save the snippets with correct separator", func() {
+		It("should save the snippets", func() {
 			snippet1 := seedSnippet()
 
 			saveSnippet(snippet1, fakeFilePath)
@@ -88,10 +105,10 @@ var _ = Describe("Snippet", func() {
 
 			saveSnippet(snippet2, fakeFilePath)
 
-			content := strings.Split(getFileContent(fakeFilePath), EOL+SnippetSeparator+EOL)
+			content := strings.Split(string(getFileContent(fakeFilePath)), "\n")
 
-			Expect(content[0]).To(Equal(snippet1.String()))
-			Expect(content[1]).To(Equal(snippet2.String()))
+			SnippetContent(content[0]).mustContain(snippet1)
+			SnippetContent(content[1]).mustContain(snippet2)
 		})
 	})
 
@@ -103,8 +120,7 @@ var _ = Describe("Snippet", func() {
 
 			content := getFileContent(fakeFilePath)
 
-			Expect(content).To(ContainSubstring(snippet.String()))
-			Expect(content).To(ContainSubstring(snippet.Content))
+			content.mustContain(snippet)
 		})
 	})
 
@@ -115,8 +131,8 @@ var _ = Describe("Snippet", func() {
 			saveSnippet(snippet, fakeFilePath)
 
 			found, err := SearchExact(snippet.Keyword, fakeFilePath)
-			Expect(err).To(BeNil())
 
+			Expect(err).To(BeNil())
 			Expect(*found).To(Equal(snippet))
 		})
 	})
@@ -210,8 +226,6 @@ var _ = Describe("Snippet", func() {
 	})
 
 	Context("when calling snippet.Remove()", func() {
-		separator := EOL + SnippetSeparator + EOL
-
 		saveThreeSnippets := func() (Snippet, Snippet, Snippet) {
 			By("saving 3 snippets")
 
@@ -231,7 +245,9 @@ var _ = Describe("Snippet", func() {
 
 			By("checking that the snippets are indeed saved")
 
-			Expect(content).To(Equal(snippet1.String() + separator + snippet2.String() + separator + snippet3.String()))
+			content.mustContain(snippet1)
+			content.mustContain(snippet2)
+			content.mustContain(snippet3)
 
 			return snippet1, snippet2, snippet3
 		}
@@ -250,7 +266,10 @@ var _ = Describe("Snippet", func() {
 
 				newContent := getFileContent(fakeFilePath)
 
-				Expect(newContent).To(Equal(snippet2.String() + separator + snippet3.String()))
+				Expect(strings.Split(string(newContent), "\n")).To(HaveLen(2))
+				newContent.mustNotContain(snippet1)
+				newContent.mustContain(snippet2)
+				newContent.mustContain(snippet3)
 			})
 		})
 
@@ -268,7 +287,10 @@ var _ = Describe("Snippet", func() {
 
 				newContent := getFileContent(fakeFilePath)
 
-				Expect(newContent).To(Equal(snippet1.String() + separator + snippet2.String()))
+				Expect(strings.Split(string(newContent), "\n")).To(HaveLen(2))
+				newContent.mustContain(snippet1)
+				newContent.mustContain(snippet2)
+				newContent.mustNotContain(snippet3)
 			})
 		})
 
@@ -286,7 +308,9 @@ var _ = Describe("Snippet", func() {
 
 				newContent := getFileContent(fakeFilePath)
 
-				Expect(newContent).To(Equal(snippet1.String() + separator + snippet3.String()))
+				newContent.mustContain(snippet1)
+				newContent.mustNotContain(snippet2)
+				newContent.mustContain(snippet3)
 			})
 		})
 	})
