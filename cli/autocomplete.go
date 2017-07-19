@@ -3,7 +3,7 @@ package cli
 import (
 	"encoding/csv"
 	"fmt"
-	"github.com/baopham/snip/snippet"
+	"gopkg.in/baopham/snip.v2/snippet"
 	"github.com/urfave/cli"
 	"os"
 )

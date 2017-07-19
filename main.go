@@ -1,9 +1,9 @@
 package main
 
 import (
-	snippetCli "github.com/baopham/snip/cli"
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
+	snippetCli "gopkg.in/baopham/snip.v2/cli"
 	"os"
 )
 
@@ -23,7 +23,7 @@ func Action(fn func(c *cli.Context) error) func(c *cli.Context) error {
 
 func main() {
 	app := cli.NewApp()
-	app.Version = "2.0.1"
+	app.Version = "2.1.0"
 	app.Usage = "Save snippets: commands, texts, emoji, etc."
 	app.EnableBashCompletion = true
 	app.Commands = []cli.Command{

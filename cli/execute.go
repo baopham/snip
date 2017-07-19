@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 	"github.com/atotto/clipboard"
-	s "github.com/baopham/snip/snippet"
+	s "gopkg.in/baopham/snip.v2/snippet"
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
 	"os/exec"

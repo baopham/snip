@@ -28,7 +28,7 @@ USAGE:
    snip [global options] command [command options] [arguments...]
 
 VERSION:
-   2.0.1
+   2.1.0
 
 COMMANDS:
      add, a      snip add -k="port" -c="lsof -i :{p}" -desc="List processes listening on a particular port"
@@ -108,7 +108,7 @@ Requirements
 Install
 ------
 ```
-go get -u github.com/baopham/snip
+go get -u gopkg.in/baopham/snip.v2
 ```
 
 Make sure you have `$GOPATH` set and `$GOPATH/bin` is in the `$PATH`, e.g.:

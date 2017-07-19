@@ -1,5 +1,6 @@
 autoload -U compinit && compinit
 autoload -U bashcompinit && bashcompinit
 
-script_dir=$GOPATH/src/github.com/baopham/snip/autocomplete
+script_dir=$GOPATH/src/gopkg.in/baopham/snip.v2/autocomplete
 source ${script_dir}/snip_bash_autocomplete
+

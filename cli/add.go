@@ -1,7 +1,7 @@
 package cli
 
 import (
-	s "github.com/baopham/snip/snippet"
+	s "gopkg.in/baopham/snip.v2/snippet"
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
 	"strings"

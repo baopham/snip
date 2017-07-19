@@ -2,7 +2,7 @@ package snippet_test
 
 import (
 	"fmt"
-	. "github.com/baopham/snip/snippet"
+	. "gopkg.in/baopham/snip.v2/snippet"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"io/ioutil"
