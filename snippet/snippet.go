@@ -9,7 +9,7 @@ import (
 	"path"
 	"strings"
 
-	"gopkg.in/baopham/snip.v2/util"
+	"gopkg.in/baopham/snip.v3/util"
 	"github.com/renstrom/fuzzysearch/fuzzy"
 )
 

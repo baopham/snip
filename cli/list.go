@@ -1,7 +1,7 @@
 package cli
 
 import (
-	s "gopkg.in/baopham/snip.v2/snippet"
+	s "gopkg.in/baopham/snip.v3/snippet"
 	"github.com/olekukonko/tablewriter"
 	"github.com/urfave/cli"
 	"os"

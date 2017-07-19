@@ -22,21 +22,22 @@ Usage
 --------
 ```
 NAME:
-   snip - Save snippets: commands, texts, emoji, etc.
+   main - Save snippets: commands, texts, emoji, etc.
 
 USAGE:
-   snip [global options] command [command options] [arguments...]
+   main [global options] command [command options] [arguments...]
 
 VERSION:
-   2.1.0
+   3.0.0
 
 COMMANDS:
-     add, a      snip add -k="port" -c="lsof -i :{p}" -desc="List processes listening on a particular port"
-     search, s   search for snippets: snip search port
-     execute, x  get the snippet by keyword: snip x port p={9000}
-     list, l     list all saved snippets: snip list
-     remove, r   remove a saved snippet: snip remove port
-     help, h     Shows a list of commands or help for one command
+     add, a       snip add -k="port" -c="lsof -i :{p}" -desc="List processes listening on a particular port"
+     search, s    search for snippets: snip search port
+     generate, g  generate the snippet by keyword: snip g port p={9000}
+     execute, x   execute the snippet by keyword: snip x port p={9000}
+     list, l      list all saved snippets: snip list
+     remove, r    remove a saved snippet: snip remove port
+     help, h      Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --help, -h     show help
@@ -74,23 +75,31 @@ you should see:
 
 ![search](screenshots/search.png)
 
-### Execute
+### Generate
 
 ```bash
-snip execute port p=9000
+snip generate port p=9000
 ```
 
 This will replace the placeholder `{p}` with `9000`:
 
-![execute](screenshots/execute.png)
-
-Or, add `--ouput` / `-o` option to save the *output* of the command to the clipboard
+![execute](screenshots/generate.png)
 
 ```bash
-snip x port p=9000 -o
+snip g port p=9000 -o
 ```
 
 > For multiple placeholders {p} {a} {b}: snip x port p=9000 a=hello b=world
+
+### Execute
+
+```bash
+snip x port p=9000
+```
+
+This will execute the snippet and print the output to your console.
+
+Or, add `--ouput` / `-o` option to save the *output* of the command to the clipboard.
 
 ### Remove
 
@@ -108,7 +117,7 @@ Requirements
 Install
 ------
 ```
-go get -u gopkg.in/baopham/snip.v2
+go get -u gopkg.in/baopham/snip.v3
 ```
 
 Make sure you have `$GOPATH` set and `$GOPATH/bin` is in the `$PATH`, e.g.:

@@ -1,9 +1,9 @@
 package main
 
 import (
+	snippetCli "gopkg.in/baopham/snip.v3/cli"
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
-	snippetCli "gopkg.in/baopham/snip.v2/cli"
 	"os"
 )
 
@@ -23,7 +23,7 @@ func Action(fn func(c *cli.Context) error) func(c *cli.Context) error {
 
 func main() {
 	app := cli.NewApp()
-	app.Version = "2.1.0"
+	app.Version = "3.0.0"
 	app.Usage = "Save snippets: commands, texts, emoji, etc."
 	app.EnableBashCompletion = true
 	app.Commands = []cli.Command{
@@ -55,17 +55,27 @@ func main() {
 			BashComplete: snippetCli.Autocomplete,
 		},
 		{
+			Name:         "generate",
+			Aliases:      []string{"g"},
+			Usage:        "generate the snippet by keyword: snip g port p={9000}",
+			Action:       Action(snippetCli.Generate),
+			BashComplete: snippetCli.Autocomplete,
+		},
+		{
 			Name:    "execute",
 			Aliases: []string{"x"},
-			Usage:   "get the snippet by keyword: snip x port p={9000}",
+			Usage:   "execute the snippet by keyword: snip x port p={9000}",
+			Action:  Action(snippetCli.Execute),
 			Flags: []cli.Flag{
 				cli.BoolFlag{
-					Name: "output, o",
-					Usage: "execute right away and save the output to clipboard. " +
-						"Without this option, the snippet will be saved to the clipboard instead",
+					Name:  "output, o",
+					Usage: "execute the snippet and save the output to clipboard",
+				},
+				cli.BoolFlag{
+					Name:  "force, f",
+					Usage: "skip the prompt and force to execute",
 				},
 			},
-			Action:       Action(snippetCli.Execute),
 			BashComplete: snippetCli.Autocomplete,
 		},
 		{
