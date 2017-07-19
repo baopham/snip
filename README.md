@@ -8,6 +8,7 @@ Table of Content
     * [Add](#add)
     * [List](#list)
     * [Search](#search)
+    * [Generate](#generate)
     * [Execute](#execute)
     * [Remove](#remove)
 * [Requirements](#requirements)
