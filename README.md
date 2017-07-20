@@ -84,7 +84,7 @@ snip generate port p=9000
 
 This will replace the placeholder `{p}` with `9000`:
 
-![execute](screenshots/generate.png)
+![generate](screenshots/generate.png)
 
 ```bash
 snip g port p=9000 -o
@@ -101,6 +101,8 @@ snip x port p=9000
 This will execute the snippet and print the output to your console.
 
 Or, add `--ouput` / `-o` option to save the *output* of the command to the clipboard.
+
+![execute](screenshots/execute.png)
 
 ### Remove
 
