@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"github.com/atotto/clipboard"
+	"github.com/baopham/go-cliutil/cliutil"
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
 	"os"
@@ -18,7 +19,7 @@ func Execute(c *cli.Context) error {
 	}
 
 	if !c.Bool("force") {
-		yes := prompt("Are you sure you want to execute: %s", content)
+		yes := cliutil.Prompt("Are you sure you want to execute: %s", content)
 
 		if !yes {
 			return nil
