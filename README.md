@@ -134,6 +134,10 @@ Autocomplete
 To have autocomplete enabled, source [snip_bash_autocomplete](autocomplete/snip_bash_autocomplete) or [snip_zsh_autocomplete](autocomplete/snip_zsh_autocomplete).
 E.g. copy one of these (depending on your shell) to `/local/path` and then add the below to your `.bashrc` or `.zhsrc`:
 
+> If your shell is zsh, we recommend:  
+> autoload -U compinit && compinit  
+> autoload -U bashcompinit && bashcompinit  
+
 ```bash
 source /local/path/snip_bash_autocomplete
 # Or
