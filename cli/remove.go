@@ -2,7 +2,7 @@ package cli
 
 import (
 	"fmt"
-	s "gopkg.in/baopham/snip.v3/snippet"
+	s "github.com/baopham/snip/snippet"
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
 	"strings"

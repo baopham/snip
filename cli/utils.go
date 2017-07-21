@@ -2,7 +2,7 @@ package cli
 
 import (
 	"github.com/urfave/cli"
-	s "gopkg.in/baopham/snip.v3/snippet"
+	s "github.com/baopham/snip/snippet"
 	"strings"
 )
 

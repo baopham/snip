@@ -1,7 +1,7 @@
 package main
 
 import (
-	snippetCli "gopkg.in/baopham/snip.v3/cli"
+	snippetCli "github.com/baopham/snip/cli"
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
 	"os"

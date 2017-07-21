@@ -1,3 +1,4 @@
-script_dir=$GOPATH/src/gopkg.in/baopham/snip.v3/autocomplete
+script_dir=$GOPATH/src/github.com/baopham/snip/autocomplete
 source ${script_dir}/snip_bash_autocomplete
+
 

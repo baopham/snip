@@ -120,7 +120,7 @@ Requirements
 Install
 ------
 ```
-go get -u gopkg.in/baopham/snip.v3
+go get -u github.com/baopham/snip
 ```
 
 Make sure you have `$GOPATH` set and `$GOPATH/bin` is in the `$PATH`, e.g.:
