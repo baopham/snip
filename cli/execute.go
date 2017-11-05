@@ -8,7 +8,6 @@ import (
 	"github.com/urfave/cli"
 	"os"
 	"os/exec"
-	"strings"
 )
 
 func Execute(c *cli.Context) error {
@@ -26,8 +25,7 @@ func Execute(c *cli.Context) error {
 		}
 	}
 
-	parts := strings.Fields(content)
-	cmd := exec.Command(parts[0], parts[1:]...)
+	cmd := exec.Command("bash", "-c", content)
 
 	if c.Bool("output") {
 		output, err := cmd.Output()
