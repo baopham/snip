@@ -5,7 +5,6 @@ import (
 	"github.com/atotto/clipboard"
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
-	"strings"
 )
 
 func Generate(c *cli.Context) error {
@@ -25,19 +24,4 @@ func Generate(c *cli.Context) error {
 	color.Green(message)
 
 	return nil
-}
-
-func getPlaceholderMapper(args cli.Args) map[string]string {
-	mapper := make(map[string]string)
-	i := 1
-	pair := args.Get(i)
-
-	for pair != "" {
-		parts := strings.Split(pair, "=")
-		mapper[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
-		pair = args.Get(i)
-		i++
-	}
-
-	return mapper
 }

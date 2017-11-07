@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"github.com/urfave/cli"
 	s "github.com/baopham/snip/snippet"
+	"github.com/urfave/cli"
 	"strings"
 )
 
@@ -32,4 +32,17 @@ func getSnippetContent(c *cli.Context) (string, error) {
 	}
 
 	return snippet.Build(mapper), nil
+}
+
+func getPlaceholderMapper(args cli.Args) map[string]string {
+	mapper := make(map[string]string)
+	pair := args.Get(1)
+
+	for i := 2; pair != ""; i++ {
+		parts := strings.Split(pair, "=")
+		mapper[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
+		pair = args.Get(i)
+	}
+
+	return mapper
 }
